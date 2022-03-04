@@ -66,22 +66,25 @@ def wait():
     input('Press enter to continue...')
 
 
-def set_teams(team1, team2, players_):
+def set_teams(team1, team2):
     # create team objects
     team_1 = Team(team1)
     team_2 = Team(team2)
     # get players' names and check if number of players is within range
-    players = players_
     while True:
-        if len(players) in range(2, 11):
+        players = input('Enter an even number of space-separated players\' '
+                        'names: ').split()
+        if len(players) in range(2, 11) and len(players) % 2 == 0:
             random.shuffle(players)
             break
-        if len(players) < 2:
+        elif len(players) < 2:
             print('Minimum number of players is 2. Please provide a valid '
                   'number')
-        if len(players) > 10:
+        elif len(players) > 10:
             print('Maximum number of players is 10. Please provide a valid '
                   'number')
+        elif len(players) % 2 != 0:
+            print('Enter an even number of players')
     # create player objects for each prompted name
     player_objects = []
     for player_name in players:
@@ -153,8 +156,7 @@ def game(team1, team2):
 def main():
     team_name_1 = input('Name the first team: ')
     team_name_2 = input('Name the second team: ')
-    players = input('Enter space-separated players\' names: ').split()
-    teams = list(set_teams(team_name_1, team_name_2, players))
+    teams = list(set_teams(team_name_1, team_name_2))
     game(teams[0], teams[1])
 
 
