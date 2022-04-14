@@ -1,15 +1,30 @@
 #!/usr/bin/env python3
 
-# This program is a multiplayer (2 - 10 players) dice game. User provides
-# teams' and players' names. Players are set into two teams randomly, choose
-# dice size and number, roll dice and get results in a table. After 10 rounds
-# the program sums up results and prints the outcome.
+"""This program is a multiplayer (2 - 10 players) dice game. User provides
+teams' and players' names. Players are set into two teams randomly, choose
+dice size and number, roll dice and get results in a table. After 10 rounds
+the program sums up results and prints the outcome."""
 
-import random
+from random import shuffle, randint
 import pandas
 
 
 class Player:
+    """
+    A class representing a Player.
+
+    Attributes
+    ----------
+    player_name : str
+        Represents player's name
+    team : Team
+        A team that the Player is assigned to
+
+    Methods
+    ----------
+    assign_team(team)
+    roll_dice(dice)
+    """
 
     def __init__(self, name):
         self.player_name = name
@@ -25,7 +40,7 @@ class Player:
     def roll_dice(dice):
         dice_sum = 0
         for i in range(0, dice.number):
-            roll = random.randint(1, dice.size)
+            roll = randint(1, dice.size)
             dice_sum += roll
             if roll == 1:
                 print(f'You rolled a {roll}! Critical Fail!')
@@ -38,6 +53,22 @@ class Player:
 
 
 class Team:
+    """
+    A class representing a Team.
+
+    Attributes
+    ----------
+    team_name : str
+        Represents a team's name
+    team_members : list
+        A list of Player objects assigned to the Team
+    score : int
+        An integer representing the Team's score
+
+    Methods
+    ----------
+    get_members(players)
+    """
 
     def __init__(self, name):
         self.team_name = name
@@ -55,27 +86,39 @@ class Team:
 
 
 class Dice:
+    """
+    A class representing dice.
+
+    Attributes
+    ----------
+    number : int
+        The number of dice used in the game
+    size : int
+        The number of sides of dice
+    """
 
     def __init__(self, number, size):
         self.number = number
         self.size = size
 
 
-# function to slow down gameplay to user-friendly level
 def wait():
+    """A function to slow down the gameplay to a user-friendly level."""
     input('Press enter to continue...')
 
 
 def set_teams(team1, team2):
-    # create team objects
+    """A function to set team members of opposing teams. It allows input with
+    players' names, creates a Player object for each prompted name and shuffle
+    players into teams. Returns Team objects."""
     team_1 = Team(team1)
     team_2 = Team(team2)
-    # get players' names and check if number of players is within range
+
     while True:
         players = input('Enter an even number of space-separated players\' '
                         'names: ').split()
         if len(players) in range(2, 11) and len(players) % 2 == 0:
-            random.shuffle(players)
+            shuffle(players)
             break
         elif len(players) < 2:
             print('Minimum number of players is 2. Please provide a valid '
@@ -85,12 +128,12 @@ def set_teams(team1, team2):
                   'number')
         elif len(players) % 2 != 0:
             print('Enter an even number of players')
-    # create player objects for each prompted name
     player_objects = []
+
     for player_name in players:
         player = Player(player_name)
         player_objects.append(player)
-    # shuffle created players into teams
+
     mid_id = len(player_objects) // 2
     team_1.get_members(player_objects[:mid_id])
     team_2.get_members(player_objects[mid_id:])
@@ -104,6 +147,11 @@ def set_teams(team1, team2):
 
 
 def game(team1, team2):
+    """The function representing the flow of the dice game. It creates a list
+    of rounds for score table, sets dice number and size, creates a Dataframe
+    object handling the score table and iterates over rounds. Each team's
+    members roll dice and the score table is updated and printed after each
+    round."""
     # create list of rounds for output table rows
     rounds = []
     for number in range(1, 11):
@@ -154,6 +202,8 @@ def game(team1, team2):
 
 
 def main():
+    """The main function of the program, takes input from the user and
+    initializes the dice game."""
     team_name_1 = input('Name the first team: ')
     team_name_2 = input('Name the second team: ')
     teams = list(set_teams(team_name_1, team_name_2))
